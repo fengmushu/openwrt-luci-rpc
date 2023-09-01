@@ -38,6 +38,8 @@ r = OpenWrtRpc(os.getenv(env_name_ip_address), 'root', os.getenv(env_name_passwo
 
 r.get_all_connected_devices(only_reachable=False)
 
+print(r.get_rssi())
+
 #import ipdb
 #ipdb.set_trace()
 #

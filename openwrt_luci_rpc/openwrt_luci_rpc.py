@@ -258,3 +258,15 @@ class OpenWrtLuciRPC:
                                     "`luci-mod-rpc`." % url)
 
         raise LuciRpcUnknownError("Invalid response from luci: %s", res)
+
+    def get_rssi(self):
+        ''' -26 '''
+        shell_command = "iwconfig ath16 | grep 'Signal level' | awk -F= '{print $3}' | awk '{print $1}'"
+        rcp_sys_version_call = Constants.LUCI_RPC_SYS_PATH.format(self.host_api_url)
+
+        try:
+            content = self._call_json_rpc(rcp_sys_version_call, "exec", shell_command)
+            return int(content)
+        except Exception as e:
+            log.debug(e)
+            return -127

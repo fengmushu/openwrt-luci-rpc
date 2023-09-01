@@ -41,3 +41,7 @@ class OpenWrtRpc:
         """Get details of all devices"""
         return self.router.get_all_connected_devices(
             only_reachable=only_reachable, wlan_interfaces=wlan_interfaces)
+
+    def get_rssi(self):
+        ''' Return the RSSI of apclient '''
+        return self.router.get_rssi()
