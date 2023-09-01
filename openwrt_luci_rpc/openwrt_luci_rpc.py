@@ -85,10 +85,9 @@ class OpenWrtLuciRPC:
 
         # get VERSION_ID from os-release if exists or get
         # DISTRIB_RELEASE from openwrt_release
-        shell_command = "if [ -f \"/etc/os-release\" ]; \
-                            then awk -F= '$1==\"VERSION_ID\" \
-                            { print $2 ;}' \
-                            /etc/os-release; \
+        shell_command = "if [ -f \"/etc/openwrt_version\" ]; \
+                            then \
+                                cat /etc/openwrt_version; \
                             else awk -F= '$1==\"DISTRIB_RELEASE\" \
                             { print $2 ;}' \
                             /etc/openwrt_release; fi | \
