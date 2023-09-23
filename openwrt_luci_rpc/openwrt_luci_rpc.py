@@ -259,14 +259,19 @@ class OpenWrtLuciRPC:
 
         raise LuciRpcUnknownError("Invalid response from luci: %s", res)
 
-    def get_rssi(self):
-        ''' -26 '''
-        shell_command = "iwconfig ath16 | grep 'Signal level' | awk -F= '{print $3}' | awk '{print $1}'"
+    def get_rssi(self, iface):
+        ''' Link Quality=94/94  Signal level=-27 dBm  Noise level=-98 dBm (BDF averaged NF value in dBm) '''
+        shell_command = "iwconfig "+ iface + " | awk -F= '/Link Quality/ {print $0}'"
         rcp_sys_version_call = Constants.LUCI_RPC_SYS_PATH.format(self.host_api_url)
 
         try:
+            import re
             content = self._call_json_rpc(rcp_sys_version_call, "exec", shell_command)
-            return int(content)
+            # print(content)
+            return re.findall(r'-?\d+', content)
         except Exception as e:
             log.debug(e)
-            return -127
+            return '0', '100', '-127', '-101'
+
+    def get_trx(self):
+        return 0

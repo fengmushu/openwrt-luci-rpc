@@ -30,6 +30,7 @@ class OpenWrtRpc:
         """
         self.router = OpenWrtLuciRPC(host_url, username, password,
                                      is_https, verify_https)
+        self.iface = 'ath16'
 
     def is_logged_in(self):
         """Returns true if a token has been aquired"""
@@ -42,6 +43,27 @@ class OpenWrtRpc:
         return self.router.get_all_connected_devices(
             only_reachable=only_reachable, wlan_interfaces=wlan_interfaces)
 
-    def get_rssi(self):
-        ''' Return the RSSI of apclient '''
-        return self.router.get_rssi()
+    def get_rssi(self, iface = None):
+        ''' Return the link quality <n/s>, rssi, noise floor of ap client '''
+        if iface != None:
+            self.iface = iface
+        try:
+            linkq = self.router.get_rssi(self.iface)
+            # print(linkq)
+            rssi = int(linkq[2])
+            if rssi <= -90:
+                if self.iface == 'ath16':
+                    self.iface = 'ath06'
+                else:
+                    self.iface = 'ath16'
+                linkq = self.router.get_rssi(self.iface)
+        except Exception as e:
+            # ath06/16 not exisited
+            linkq = ['0', '100', '-127', '-101']
+            print(e)
+            pass
+
+        return int(linkq[0]), int(linkq[1]), int(linkq[2])
+
+    def get_trx(self):
+        return self.router.get_trx()
